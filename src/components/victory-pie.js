@@ -22,7 +22,7 @@ const defaultStyles = {
     strokeWidth: 0,
     stroke: "transparent",
     fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-    fontSize: 10,
+    fontSize: 7.5,
     textAnchor: "middle"
   }
 };
@@ -302,7 +302,7 @@ export default class VictoryPie extends React.Component {
       .startAngle(degreesToRadians(props.startAngle))
       .endAngle(degreesToRadians(props.endAngle))
       .padAngle(degreesToRadians(props.padAngle))
-      .value((datum) => { return datum.y; });
+      .value((datum) => datum.y);
   }
 
   renderData(props, calculatedProps) {
@@ -361,12 +361,7 @@ export default class VictoryPie extends React.Component {
         const sliceLabel = React.cloneElement(props.labelComponent, assign({
           events: Helpers.getPartialEvents(labelEvents, index, labelProps)
         }, labelProps));
-        return (
-          <g key={`slice-group-${index}`}>
-            {sliceComponent}
-            {sliceLabel}
-          </g>
-        );
+        return this.renderSlice(index, sliceComponent, sliceLabel);
       }
       return sliceComponent;
     }));
@@ -387,6 +382,35 @@ export default class VictoryPie extends React.Component {
 
   }
 
+  renderSlice(index, component, label) {
+    return (
+      <g key={`slice-group-${index}`}>
+        {component}
+        {label}
+      </g>
+    );
+  }
+
+  renderGroup(style, xOffset, yOffset, calculatedProps) {
+    return (
+      <g style={style} transform={`translate(${xOffset}, ${yOffset})`}>
+        {this.renderData(this.props, calculatedProps)}
+      </g>
+    );
+  }
+
+  renderStandalone(style, group) {
+    return (
+      <svg
+        style={style}
+        viewBox={`0 0 ${this.props.width} ${this.props.height}`}
+        {...this.props.events.parent}
+      >
+        {group}
+      </svg>
+    );
+  }
+
   render() {
     // If animating, return a `VictoryAnimation` element that will create
     // a new `VictoryBar` with nearly identical props, except (1) tweened
@@ -398,7 +422,7 @@ export default class VictoryPie extends React.Component {
       ];
       return (
         <VictoryTransition animate={this.props.animate} animationWhitelist={whitelist}>
-          <VictoryPie {...this.props}/>
+          {React.createElement(this.constructor, this.props)}
         </VictoryTransition>
       );
     }
@@ -407,20 +431,8 @@ export default class VictoryPie extends React.Component {
     const { style, padding, radius } = calculatedProps;
     const xOffset = radius + padding.left;
     const yOffset = radius + padding.top;
-    const group = (
-      <g style={style.parent} transform={`translate(${xOffset}, ${yOffset})`}>
-        {this.renderData(this.props, calculatedProps)}
-      </g>
-    );
+    const group = this.renderGroup(style.parent, xOffset, yOffset, calculatedProps);
 
-    return this.props.standalone ?
-      <svg
-        style={style.parent}
-        viewBox={`0 0 ${this.props.width} ${this.props.height}`}
-        {...this.props.events.parent}
-      >
-        {group}
-      </svg> :
-      group;
+    return this.props.standalone ? this.renderStandalone(style.parent, group) : group;
   }
 }

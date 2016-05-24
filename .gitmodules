@@ -1,0 +1,4 @@
+[submodule "node_modules/victory-core"]
+	path = node_modules/victory-core
+	url = git@github.com:vakhtang/victory-core.git
+	branch = native

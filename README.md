@@ -24,6 +24,16 @@ $ npm test
 
 For more on the development environment, see [DEVELOPMENT](https://github.com/FormidableLabs/builder-victory-component/blob/master/dev/DEVELOPMENT.md) in the project builder archetype.
 
+## React Native
+
+```sh
+$ git submodule update --init
+$ npm install
+$ npm run native
+```
+
+Then open `demo/native/ios/App.xcodeproj` and run the app.
+
 ## Contributing
 
 Please see [CONTRIBUTING](https://github.com/FormidableLabs/builder-victory-component/blob/master/dev/CONTRIBUTING.md) in the project builder archetype.
