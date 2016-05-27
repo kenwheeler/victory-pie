@@ -18,6 +18,7 @@ Thumbs.db
 .editor*
 .eslint*
 .travis*
+.babelrc
 bower_components
 coverage
 demo
